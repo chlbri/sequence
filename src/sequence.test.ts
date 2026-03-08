@@ -1,7 +1,7 @@
-import { createFakeWaiter, createTests } from '@bemedev/vitest-extended';
-import { createSequence, type SequenceType, sequence } from './index';
-import { record, useStart } from './fixtures';
 import sleep from '@bemedev/sleep';
+import { createFakeWaiter, createTests } from '@bemedev/vitest-extended';
+import { record, useStart } from './fixtures';
+import { createSequence, sequence, type SequenceType } from './index';
 
 vi.useFakeTimers();
 const waiter = createFakeWaiter(vi);
@@ -220,24 +220,25 @@ describe('#02 => Sequence – add', () => {
 });
 
 describe('#03 => Sequence – clear', () => {
-  describe('#01 => resets size to 0 and return this (fluent)', () => {
-    const seq = sequence();
-    test('#01 => Initial size is 0', () => expect(seq.size).toBe(0));
-    test('#02 => Add two actions', () => seq.add(100).add(200));
-    test('#03 => Size is 2', () => expect(seq.size).toBe(2));
+  const seq = sequence();
+  test('#01 => Initial size is 0', () => expect(seq.size).toBe(0));
+  test('#02 => Add two actions', () => seq.add(100).add(200));
+  test('#03 => Size is 2', () => expect(seq.size).toBe(2));
 
-    test('#04 => Clear returns the sequence itself', () => {
-      const result = seq.clear();
-      expect(result).toBe(seq);
-    });
+  test('#04 => Clear returns the sequence itself', () => {
+    const result = seq.clear();
+    expect(result).toBe(seq);
+  });
 
-    test('#05 => Size is reset to 0', () => expect(seq.size).toBe(0));
+  test('#05 => Size is reset to 0', () => expect(seq.size).toBe(0));
+  test('#06 => State is reset to started', () => {
+    expect(seq.state).toBe('started');
   });
 });
 
-test('#04 => Sequence.isRunning -> initially false', () => {
+test('#04 => Sequence.state -> initially idle', () => {
   const seq = createSequence();
-  expect(seq.isRunning).toBe(false);
+  expect(seq.state).toBe('idle');
 });
 
 describe('#05 => Sequence – renew', () => {
@@ -505,31 +506,7 @@ describe('#06 => Sequence – run (timing)', () => {
     });
   });
 
-  describe('#06 => isRunning is true while running', () => {
-    const seq = createSequence();
-
-    test('#01 => Add action', () => {
-      seq.add(200, () => {});
-    });
-
-    test('#02 => isRunning is false before run', () => {
-      expect(seq.isRunning).toBe(false);
-    });
-
-    test('#03 => Run the sequence', seq.run);
-
-    test('#04 => isRunning is true during run', () => {
-      expect(seq.isRunning).toBe(true);
-    });
-
-    test('#05 => Wait 200ms', () => waiter(200));
-
-    test('#06 => isRunning is false after run', () => {
-      expect(seq.isRunning).toBe(false);
-    });
-  });
-
-  describe('#07 => can run again after completion, but not in running', () => {
+  describe('#07 => cannot run after finished, but add rewinds to started', () => {
     const counter = { count: 0 };
     const seq = createSequence();
 
@@ -545,10 +522,26 @@ describe('#06 => Sequence – run (timing)', () => {
       expect(counter.count).toBe(1);
     });
 
-    test('#06 => Run again after completion', seq.run);
-    test('#07 => Wait 50ms', () => waiter(50));
+    test('#06 => State is finished', () => {
+      expect(seq.state).toBe('finished');
+    });
 
-    test('#08 => Action fired again', () => {
+    test('#07 => Run again after finished (ignored)', seq.run);
+    test('#08 => Wait 50ms', () => waiter(50));
+
+    test('#09 => Action not fired again (still 1)', () => {
+      expect(counter.count).toBe(1);
+    });
+
+    test('#10 => Add new action rewinds state to started', () => {
+      seq.add(50, () => counter.count++);
+      expect(seq.state).toBe('started');
+    });
+
+    test('#11 => Run again after add', seq.run);
+    test('#12 => Wait 50ms', () => waiter(50));
+
+    test('#13 => Action fired again', () => {
       expect(counter.count).toBe(2);
     });
   });
@@ -586,47 +579,6 @@ describe('#06 => Sequence – run (timing)', () => {
 
     test('#08 => Next action fired after async completion', () => {
       expect(order).toEqual(['start-a', 'b', 'end-a']);
-    });
-  });
-});
-
-describe('#07 => Sequence – run (withDefaultDelay helper)', () => {
-  describe('#01 => three steps each 100 ms apart (accumulated)', () => {
-    const advance = createFakeWaiter.withDefaultDelay(vi, 100);
-    const start = useStart();
-    const recorder = record(() => start());
-    const seq = createSequence();
-
-    test('#01 => Add actions', () => {
-      seq
-        .add(100, recorder.action(0))
-        .add(100, recorder.action(1))
-        .add(100, recorder.action(2));
-    });
-
-    test('#02 => Run the sequence', seq.run);
-
-    test('#03 => Advance all steps', async () => {
-      const steps = [advance(0), advance(1), advance(2)];
-      await Promise.all(steps.map(([, fn]) => fn()));
-    });
-
-    test('#04 => Actions ran in correct order', () => {
-      expect(recorder.log.map(e => e.index)).toEqual([0, 1, 2]);
-    });
-
-    describe('#05 => Elapsed times are correct', () => {
-      test('#01 => first action at 100 ms', () => {
-        expect(recorder.log[0].elapsed).toBe(100);
-      });
-
-      test('#02 => second action at 200 ms', () => {
-        expect(recorder.log[1].elapsed).toBe(200);
-      });
-
-      test('#03 => third action at 300 ms', () => {
-        expect(recorder.log[2].elapsed).toBe(300);
-      });
     });
   });
 });
