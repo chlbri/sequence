@@ -108,5 +108,8 @@
     "onlyBuiltDependencies": [
       "esbuild"
     ]
+  },
+  "dependencies": {
+    "@bemedev/sleep": "^0.2.1"
   }
 }
