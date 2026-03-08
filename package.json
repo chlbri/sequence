@@ -1,5 +1,5 @@
 {
-  "name": "@bemedev///TODO",
+  "name": "@bemedev/sequence",
   "version": "0.0.1",
   "description": "//TODO",
   "author": {
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "//TODO"
+    "url": "https://github.com/chlbri/sequence"
   },
   "license": "MIT",
   "type": "module",
