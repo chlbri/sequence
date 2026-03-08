@@ -1,26 +1,101 @@
-# Beatifull lib
+# @bemedev/sequence
 
-A beautifull description
+A simple utility for managing sequences of timed actions in
+JavaScript/TypeScript. Provides an easy way to create and run sequences of
+actions with customizable delays.
+
+<br/>
+
+## Installation
+
+```bash
+npm install @bemedev/sequence
+# or
+pnpm add @bemedev/sequence
+```
+
+<br/>
+
+## Usage
+
+```ts
+import { createSequence } from '@bemedev/sequence';
+
+const seq = createSequence({ delayMultiplier: 2 });
+
+seq
+  .add(500, () => console.log('Fires after 1000ms'))
+  .add(300, () => console.log('Fires after 1600ms')) // 500+300=800, ×2=1600ms
+  .add(200, () => console.log('Fires after 2000ms')); // 800+200=1000, ×2=2000ms
+
+await seq.run();
+```
+
+<br/>
+
+## API
+
+### `createSequence(options?)` / `sequence(options?)`
+
+Factory function that returns a `SequenceType` instance.
+
+| Option            | Type     | Default | Description                                     |
+| ----------------- | -------- | ------- | ----------------------------------------------- |
+| `delayMultiplier` | `number` | `1`     | Multiplier applied to every delay. Must be > 0. |
+
+Throws `RangeError` if `delayMultiplier <= 0`.
+
+---
+
+### `SequenceType`
+
+#### Methods
+
+| Method  | Signature                                  | Description                                                                                           |
+| ------- | ------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| `add`   | `(delay: number, action?: Action) => this` | Adds a step. `delay` (ms) is accumulated onto the previous step's delay. Returns `this` for chaining. |
+| `run`   | `() => Promise<void>`                      | Runs all steps. Concurrent calls while running are ignored. No-op if already finished.                |
+| `clear` | `() => this`                               | Removes all steps and resets state to `'started'`. Returns `this`.                                    |
+
+#### Getters
+
+| Getter  | Type           | Description                                                            |
+| ------- | -------------- | ---------------------------------------------------------------------- |
+| `size`  | `number`       | Number of registered steps.                                            |
+| `state` | `State`        | Current state: `'idle'` \| `'started'` \| `'running'` \| `'finished'`. |
+| `renew` | `SequenceType` | New instance with the same options but no entries.                     |
+
+#### State machine
+
+```
+idle → started → running → finished
+```
+
+---
+
+### `nothing`
+
+A no-op `Action` used as the default when no callback is provided to `add`.
+
+<br/>
+
+## Types
+
+```ts
+type Action = () => any | Promise<any>;
+
+type SequenceOptions = {
+  delayMultiplier?: number; // default: 1
+};
+
+type State = 'idle' | 'started' | 'running' | 'finished';
+```
 
 <br/>
 
 ## Licence
 
 MIT
-
-## CHANGE_LOG
-
-<details>
-
-<summary>
-...
-</summary>
-
-### Version [0.0.1] --> _date & hour_
-
-- ✨ Première version de la bibliothèque
-
-</details>
 
 <br/>
 
@@ -34,6 +109,10 @@ chlbri (bri_lvi@icloud.com)
 
 <br/>
 
+## CHANGELOG
+
+See [CHANGELOG.md](CHANGELOG.md)
+
 ## Liens
 
-- [Documentation](https://github.com/chlbri/new-package)
+- [Documentation](https://github.com/chlbri/sequence)

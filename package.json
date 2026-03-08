@@ -1,7 +1,7 @@
 {
   "name": "@bemedev/sequence",
   "version": "0.0.1",
-  "description": "//TODO",
+  "description": "A simple utility for managing sequences of timed actions in JavaScript. Provides an easy way to create and run sequences of actions with customizable delays and error handling.",
   "author": {
     "email": "bri_lvi@icloud.com",
     "name": "chlbri",
@@ -31,7 +31,10 @@
     }
   ],
   "keywords": [
-    "//TODO"
+    "sequence",
+    "timed actions",
+    "utility",
+    "delay"
   ],
   "files": [
     "lib",
