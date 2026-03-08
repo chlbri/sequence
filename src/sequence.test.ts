@@ -527,9 +527,10 @@ describe('#06 => Sequence – run (timing)', () => {
     });
 
     test('#07 => Run again after finished (ignored)', seq.run);
-    test('#08 => Wait 50ms', () => waiter(50));
+    test('#08 => Wait 5000ms', () => waiter(5000));
 
-    test('#09 => Action not fired again (still 1)', () => {
+    test('#09 => Action not fired again (counter.count is still 1)', () => {
+      expect(seq.size).toBe(0);
       expect(counter.count).toBe(1);
     });
 
