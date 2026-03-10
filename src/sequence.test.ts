@@ -1,4 +1,4 @@
-import sleep from '@bemedev/sleep';
+import { sleep } from '@bemedev/sleep';
 import { createFakeWaiter, createTests } from '@bemedev/vitest-extended';
 import { record, useStart } from './fixtures';
 import { createSequence, sequence, type SequenceType } from './index';

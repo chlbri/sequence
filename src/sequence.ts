@@ -1,4 +1,4 @@
-import sleep from '@bemedev/sleep';
+import { sleep } from '@bemedev/sleep';
 import { nothing } from './helpers';
 import type { SequenceEntry, SequenceOptions, State } from './types';
 

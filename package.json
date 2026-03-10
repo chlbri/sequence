@@ -1,6 +1,6 @@
 {
   "name": "@bemedev/sequence",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A simple utility for managing sequences of timed actions in JavaScript. Provides an easy way to create and run sequences of actions with customizable delays and error handling.",
   "author": {
     "email": "bri_lvi@icloud.com",
@@ -55,8 +55,8 @@
     "lint:watch": "onchange --await-write-finish 5500 \"**/*\" -- pnpm run lint",
     "prepublishOnly": "",
     "prepare": "husky",
-    "pretest": "pnpm run build",
-    "posttest": "pnpm run size",
+    "pretest": "pnpm run build && pnpm build-tests pre",
+    "posttest": "pnpm build-tests post && pnpm run size",
     "prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
     "p-q": "pretty-quick",
     "rinit": "pnpm run rm && pnpm run config",
@@ -82,6 +82,7 @@
     }
   ],
   "devDependencies": {
+    "@bemedev/build-tests": "^0.1.2",
     "@bemedev/fsf": "^1.0.1",
     "@bemedev/rollup-config": "^0.2.2",
     "@bemedev/vitest-alias": "^0.0.3",
@@ -90,9 +91,9 @@
     "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^10.0.1",
     "@size-limit/file": "^12.0.1",
-    "@types/node": "^25.3.5",
-    "@typescript-eslint/eslint-plugin": "^8.56.1",
-    "@typescript-eslint/parser": "^8.56.1",
+    "@types/node": "^25.4.0",
+    "@typescript-eslint/eslint-plugin": "^8.57.0",
+    "@typescript-eslint/parser": "^8.57.0",
     "@vitest/coverage-v8": "^3.2.4",
     "eslint": "^10.0.3",
     "glob": "^13.0.6",
@@ -113,6 +114,6 @@
     ]
   },
   "dependencies": {
-    "@bemedev/sleep": "^0.2.1"
+    "@bemedev/sleep": "^0.2.2"
   }
 }

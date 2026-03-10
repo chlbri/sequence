@@ -16,3 +16,6 @@ export const useStart = () => {
   beforeAll(() => (start = Date.now()));
   return () => start;
 };
+
+export const dumbFn = () => {};
+export const TEST_SKIP = process.env.VITEST_VSCODE === 'true';
