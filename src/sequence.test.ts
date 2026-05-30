@@ -54,7 +54,7 @@ describe('#01 => createSequence', () => {
 });
 
 describe('#02 => Sequence – add', () => {
-  describe('#01 => returns this (fluent) adn increases size', () => {
+  describe('#01 => returns this (fluent) and increases size', () => {
     const seq = sequence();
     const add = (delay: number) => seq.add(delay, () => {});
     const { success, fails, acceptation } = createTests(add);
