@@ -1,3 +1,5 @@
+import { nothing } from './helpers';
+
 /** Records the elapsed time (relative to a given start) at which each action fires. */
 export const record = (getStart: () => number) => {
   const log: { index: number; elapsed: number }[] = [];
@@ -17,5 +19,5 @@ export const useStart = () => {
   return () => start;
 };
 
-export const dumbFn = () => {};
+export const dumbFn = nothing as any;
 export const TEST_SKIP = process.env.VITEST_VSCODE === 'true';

@@ -42,7 +42,7 @@
       }
     },
     {
-      "label": "pnpm:ci",
+      "label": "pnpm:lint",
       "type": "npm",
       "presentation": {
         "echo": true,
@@ -52,10 +52,10 @@
         "clear": true,
         "close": true
       },
-      "script": "ci",
+      "script": "lint",
       "isBackground": false,
       "hide": true,
-      "detail": "CI the package",
+      "detail": "Lint the package",
       "dependsOn": "pnpm:install",
       "runOptions": {
         "runOn": "folderOpen",

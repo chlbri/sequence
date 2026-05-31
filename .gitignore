@@ -143,3 +143,6 @@ build.npm.js
 
 #vitest
 tsconfig.vitest-temp.json
+
+#pnpm
+.pnpm-store

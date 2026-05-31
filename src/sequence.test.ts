@@ -1,7 +1,15 @@
 import { sleep } from '@bemedev/sleep';
-import { createFakeWaiter, createTests } from '@bemedev/vitest-extended';
+import {
+  createFakeWaiter,
+  createTests,
+} from '@bemedev/dev-utils/vitest-extended';
 import { record, useStart } from './fixtures';
-import { createSequence, sequence, type SequenceType } from './index';
+import {
+  createSequence,
+  nothing,
+  sequence,
+  type SequenceType,
+} from './index';
 
 vi.useFakeTimers();
 const waiter = createFakeWaiter(vi);
@@ -33,6 +41,19 @@ describe('#01 => createSequence', () => {
           expect(typeof value.run).toBe('function');
         },
       },
+      {
+        invite: 'Add return nothin',
+        parameters: [{ delayMultiplier: 1 }],
+        expected: {} as SequenceType,
+        test: async value => {
+          const mock = vi.fn(nothing);
+          value.add(0, mock);
+          expect(value.size).toBe(1);
+          await value.run();
+          expect(mock).toHaveBeenCalledTimes(1);
+          expect(value.size).toBe(0);
+        },
+      },
     ),
   );
 
@@ -56,7 +77,7 @@ describe('#01 => createSequence', () => {
 describe('#02 => Sequence – add', () => {
   describe('#01 => returns this (fluent) and increases size', () => {
     const seq = sequence();
-    const add = (delay: number) => seq.add(delay, () => {});
+    const add = (delay: number) => seq.add(delay, nothing);
     const { success, fails, acceptation } = createTests(add);
     describe('#00 => Acceptation', acceptation);
 
