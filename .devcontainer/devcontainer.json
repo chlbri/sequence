@@ -7,7 +7,7 @@
     "memory": "3gb"
   },
   // pnpm via corepack (ships with Node 24) + install deps
-  "postCreateCommand": "corepack use pnpm@latest && pnpm install --frozen-lockfile",
+  "postCreateCommand": "corepack use pnpm@latest && pnpm ci:admin",
   // Forward vitest --ui port, also Ollama
   "forwardPorts": [51204, 11434],
   "portsAttributes": {
@@ -48,7 +48,17 @@
         "github.copilot-chat",
         "anthropic.claude-code",
         "Gruntfuggly.todo-tree",
-        "TypeScriptTeam.native-preview"
+        "TypeScriptTeam.native-preview",
+        "formulahendry.code-runner",
+        "andaviaco.copy-path",
+        "ms-azuretools.vscode-docker",
+        "docker.docker",
+        "wix.vscode-import-cost",
+        "christian-kohler.npm-intellisense",
+        "christian-kohler.path-intellisense",
+        "MylesMurphy.prettify-ts",
+        "yatki.vscode-surround",
+        "redhat.vscode-yaml"
       ]
     }
   }
