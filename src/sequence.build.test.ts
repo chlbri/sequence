@@ -1,7 +1,11 @@
-import { this1 } from '@bemedev/build-tests/constants';
-import { createFakeWaiter, createTests } from '@bemedev/vitest-extended';
+import { customImport } from '@bemedev/dev-utils/build-tests';
+import {
+  createFakeWaiter,
+  createTests,
+} from '@bemedev/dev-utils/vitest-extended';
 import { dumbFn, TEST_SKIP } from './fixtures';
 import type { SequenceType } from './sequence';
+import { nothing } from './helpers';
 
 describe.skipIf(TEST_SKIP)('build', () => {
   const DELAY = 100;
@@ -10,16 +14,15 @@ describe.skipIf(TEST_SKIP)('build', () => {
       dumbFn,
       {
         name: 'sequence',
-        instanciation: async () => {
-          const func = await import(this1).then(({ sequence }) => {
-            const seq = sequence();
-            const add = (delay: number) => seq.add(delay, () => {});
+        instanciation: () =>
+          customImport({
+            fn: m => {
+              const seq = m.sequence() as SequenceType;
+              const add = (delay: number) => seq.add(delay, nothing);
 
-            return add;
-          });
-
-          return func;
-        },
+              return add;
+            },
+          }),
       },
     );
 
@@ -39,7 +42,7 @@ describe.skipIf(TEST_SKIP)('build', () => {
         {
           invite: 'Increase size by 1 for each added step',
           parameters: 10,
-          expected: {},
+          expected: {} as any,
           test: value => {
             expect(value.size).toBe(2);
           },
@@ -59,22 +62,20 @@ describe.skipIf(TEST_SKIP)('build', () => {
       dumbFn,
       {
         name: 'sequence',
-        instanciation: async () => {
-          const func = await import(this1).then(({ sequence }) => {
-            const out: Test1 = {
-              index: 0,
-            };
-            const seq: SequenceType = sequence();
-            const fn = () => out.index++;
-            seq.add(DELAY, fn);
-            seq.add(DELAY, fn);
-            seq.add(DELAY, fn);
-            seq.run();
-            return () => out;
-          });
+        instanciation: () =>
+          customImport({
+            fn: m => {
+              const out: Test1 = { index: 0 };
+              const seq = m.sequence() as SequenceType;
+              const fn = () => out.index++;
 
-          return func;
-        },
+              seq.add(DELAY, fn);
+              seq.add(DELAY, fn);
+              seq.add(DELAY, fn);
+              seq.run();
+              return () => out;
+            },
+          }),
       },
     );
 
@@ -86,14 +87,14 @@ describe.skipIf(TEST_SKIP)('build', () => {
         {
           invite: 'No performeds at start, index is (0)',
 
-          expected: {},
+          expected: {} as any,
           test: (value: Test1) => {
             expect(value.index).toBe(0);
           },
         },
         {
           invite: `Performeds after ${DELAY}ms, index is now (1)`,
-          expected: {},
+          expected: {} as any,
           test: async (value: Test1) => {
             await vi.advanceTimersByTimeAsync(DELAY);
             expect(value.index).toBe(1);
@@ -109,7 +110,7 @@ describe.skipIf(TEST_SKIP)('build', () => {
     const waiter = createFakeWaiter.withDefaultDelay(vi, DELAY);
 
     beforeAll(async () => {
-      const { sequence } = await import(this1);
+      const { sequence } = await customImport({ fn: m => m });
       out = sequence();
     });
 

@@ -1,7 +1,15 @@
 import { sleep } from '@bemedev/sleep';
-import { createFakeWaiter, createTests } from '@bemedev/vitest-extended';
+import {
+  createFakeWaiter,
+  createTests,
+} from '@bemedev/dev-utils/vitest-extended';
 import { record, useStart } from './fixtures';
-import { createSequence, sequence, type SequenceType } from './index';
+import {
+  createSequence,
+  nothing,
+  sequence,
+  type SequenceType,
+} from './index';
 
 vi.useFakeTimers();
 const waiter = createFakeWaiter(vi);
@@ -33,6 +41,19 @@ describe('#01 => createSequence', () => {
           expect(typeof value.run).toBe('function');
         },
       },
+      {
+        invite: 'Add return nothin',
+        parameters: [{ delayMultiplier: 1 }],
+        expected: {} as SequenceType,
+        test: async value => {
+          const mock = vi.fn(nothing);
+          value.add(0, mock);
+          expect(value.size).toBe(1);
+          await value.run();
+          expect(mock).toHaveBeenCalledTimes(1);
+          expect(value.size).toBe(0);
+        },
+      },
     ),
   );
 
@@ -54,9 +75,9 @@ describe('#01 => createSequence', () => {
 });
 
 describe('#02 => Sequence – add', () => {
-  describe('#01 => returns this (fluent) adn increases size', () => {
+  describe('#01 => returns this (fluent) and increases size', () => {
     const seq = sequence();
-    const add = (delay: number) => seq.add(delay, () => {});
+    const add = (delay: number) => seq.add(delay, nothing);
     const { success, fails, acceptation } = createTests(add);
     describe('#00 => Acceptation', acceptation);
 
@@ -114,7 +135,7 @@ describe('#02 => Sequence – add', () => {
         seq.add(100, recorder.action(0)).add(150, recorder.action(1));
       });
 
-      test('#02 => Run the sequence', seq.run);
+      test('#02 => Run the sequence', () => void seq.run());
       test('#03 => Waits for "100" ms', () => waiter(100));
 
       test('#04 => It should have fired the first action', () => {
@@ -151,7 +172,7 @@ describe('#02 => Sequence – add', () => {
           .add(100, recorder.action(2));
       });
 
-      test('#02 => Run the sequence', seq.run);
+      test('#02 => Run the sequence', () => void seq.run());
 
       test('#03 => Initially empty', () => {
         expect(recorder.log).toHaveLength(0);
@@ -199,7 +220,7 @@ describe('#02 => Sequence – add', () => {
         seq.add(0, recorder.action(0)).add(200, recorder.action(1));
       });
 
-      test('#02 => Run the sequence', seq.run);
+      test('#02 => Run the sequence', () => void seq.run());
       test('#03 => Wait 200ms', () => waiter(200));
 
       test('#04 => Both actions fired', () => {
@@ -283,7 +304,7 @@ describe('#05 => Sequence – renew', () => {
         renewed.add(100, recorder.action(0));
       });
 
-      test('#03 => Run renewed', renewed.run);
+      test('#03 => Run renewed', () => void renewed.run());
       test('#04 => Wait 200ms (100 * 2)', () => waiter(200));
 
       test('#05 => Renewed sequence fired with scaled delay', () => {
@@ -292,7 +313,7 @@ describe('#05 => Sequence – renew', () => {
       });
 
       test('#06 => Wait 200ms', () => waiter(100 * 2));
-      test('#07 => Run original', original.run);
+      test('#07 => Run original', () => void original.run());
       test('#08 => Wait 200ms', () => waiter(100 * 2));
 
       test('#09 => Original fired with scaled delay', () => {
@@ -332,7 +353,7 @@ describe('#06 => Sequence – run (timing)', () => {
         .add(50, recorder.action(2));
     });
 
-    test('#02 => Run the sequence', seq.run);
+    test('#02 => Run the sequence', () => void seq.run());
 
     test('#03 => Initially empty', () => {
       expect(recorder.log).toHaveLength(0);
@@ -430,7 +451,7 @@ describe('#06 => Sequence – run (timing)', () => {
       seq.add(100, recorder.action(0)).add(200, recorder.action(1));
     });
 
-    test('#02 => Run the sequence', seq.run);
+    test('#02 => Run the sequence', () => void seq.run());
     test('#03 => Wait 300ms (100 * 3)', () => waiter(100 * 3));
     test('#04 => Wait 600ms (200 * 3)', () => waiter(200 * 3));
 
@@ -458,7 +479,7 @@ describe('#06 => Sequence – run (timing)', () => {
       seq.add(200, recorder.action(0));
     });
 
-    test('#02 => Run the sequence', seq.run);
+    test('#02 => Run the sequence', () => void seq.run());
     test('#03 => Wait 100ms (200 / 2)', () => waiter(200 / 2));
 
     test('#04 => Action fired', () => {
@@ -514,7 +535,7 @@ describe('#06 => Sequence – run (timing)', () => {
       seq.add(50, () => counter.count++);
     });
 
-    test('#02 => Run the sequence', seq.run);
+    test('#02 => Run the sequence', () => void seq.run());
     test('#03 => Run again (ignored while running)', seq.run);
     test('#04 => Wait 50ms', () => waiter(50));
 
@@ -539,7 +560,7 @@ describe('#06 => Sequence – run (timing)', () => {
       expect(seq.state).toBe('started');
     });
 
-    test('#11 => Run again after add', seq.run);
+    test('#11 => Run again after add', () => void seq.run());
     test('#12 => Wait 50ms', () => waiter(50));
 
     test('#13 => Action fired again', () => {
@@ -563,7 +584,7 @@ describe('#06 => Sequence – run (timing)', () => {
         });
     });
 
-    test('#02 => Run the sequence', seq.run);
+    test('#02 => Run the sequence', () => void seq.run());
     test('#03 => Wait 50ms', () => waiter(50));
 
     test('#04 => Async action started', () => {

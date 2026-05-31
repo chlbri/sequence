@@ -71,7 +71,7 @@ class SequenceType {
       return promise;
     });
 
-    Promise.all(entries.map(fn => fn())).finally(() => {
+    await Promise.all(entries.map(fn => fn())).finally(() => {
       this.#state = 'finished';
     });
   };

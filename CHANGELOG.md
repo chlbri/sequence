@@ -1,16 +1,41 @@
 <details>
 <summary>
 
+## **[1.0.0] - 31/05/2026** => _13:03_
+
+</summary>
+
+- **Fix**: `Sequence.run` now properly awaits `Promise.all` — resolves
+  critical bug where promises could remain unresolved
+- **Fix**: Removed circular type import dependency
+- **Fix**: Corrected typo: `adn` → `and`
+- **Feature**: Added devcontainer configuration for Node.js library
+  development
+- **Update**: Added `rpt2@0.37.0` for TypeScript 6.0 compatibility
+- **Update**: Dependencies: `@bemedev/sleep`, `@types/node`, TypeScript,
+  and tooling libraries
+- <u>Test coverage **_100%_**</u>
+
+</details>
+
+<br/>
+
+<details>
+<summary>
+
 ## **[0.1.0] - 10/03/2026** => _23:09_
 
 </summary>
 
-- Add suite de tests de build (`sequence.build.test.ts`) couvrant `add` et `run`
+- Add suite de tests de build (`sequence.build.test.ts`) couvrant `add` et
+  `run`
 - Add `dumbFn` et `TEST_SKIP` dans `fixtures.ts`
 - Wire `@bemedev/build-tests` dans les hooks `pretest`/`posttest`
 - Refactor : passage de `sleep` en import nommé dans `sequence.ts`
 - Update `tsconfig.json` : `module: esnext`, types vitest
-- Update dépendances : `@bemedev/build-tests@^0.1.2`, `@types/node@^25.4.0`, `@typescript-eslint@^8.57.0`, `@bemedev/sleep@^0.2.2`
+- Update dépendances : `@bemedev/build-tests@^0.1.2`,
+  `@types/node@^25.4.0`, `@typescript-eslint@^8.57.0`,
+  `@bemedev/sleep@^0.2.2`
 - <u>Test coverage **_100%_**</u>
 
 </details>

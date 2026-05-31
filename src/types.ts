@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { SequenceType } from './index';
-
 /**
  * Types used in the Sequence implementation and tests.
  * These are exported for better type safety and reusability across the codebase.
